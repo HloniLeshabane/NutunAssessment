@@ -1,0 +1,105 @@
+<!-- Nunjucks template for server-side rendering of weather cards -->
+<!-- This demonstrates requirement 4: dynamic HTML generation -->
+
+{% macro weatherCard(data) %}
+<div class="card weather-card shadow mb-4" data-location="{{ data.address }}">
+    <div class="card-header bg-primary text-white">
+        <h4><i class="fas fa-map-marker-alt"></i> {{ data.address }}</h4>
+        <small>
+            Lat: {{ data.coordinates.latitude | round(4) }}, 
+            Lon: {{ data.coordinates.longitude | round(4) }}
+        </small>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4 text-center">
+                <img src="https://openweathermap.org/img/wn/{{ data.current.icon }}@2x.png" 
+                     alt="{{ data.current.description }}" 
+                     class="weather-icon">
+                <h2 class="display-4">{{ data.current.temperature }}°C</h2>
+                <p class="text-capitalize">{{ data.current.description }}</p>
+            </div>
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-6">
+                        <p><i class="fas fa-thermometer-half text-danger"></i> 
+                           Feels like: <strong>{{ data.current.feels_like }}°C</strong></p>
+                        <p><i class="fas fa-tint text-info"></i> 
+                           Humidity: <strong>{{ data.current.humidity }}%</strong></p>
+                        <p><i class="fas fa-wind text-primary"></i> 
+                           Wind: <strong>{{ data.current.wind_speed }} m/s</strong></p>
+                    </div>
+                    <div class="col-6">
+                        <p><i class="fas fa-compress text-secondary"></i> 
+                           Pressure: <strong>{{ data.current.pressure }} hPa</strong></p>
+                        <p><i class="fas fa-cloud text-muted"></i> 
+                           Cloudiness: <strong>{{ data.current.clouds }}%</strong></p>
+                        <p><i class="fas fa-eye"></i> 
+                           Visibility: <strong>{{ (data.current.visibility/1000) | round(1) }} km</strong></p>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-6">
+                        <p><i class="fas fa-sun text-warning"></i> 
+                           Sunrise: <strong>{{ data.current.sunrise }}</strong></p>
+                    </div>
+                    <div class="col-6">
+                        <p><i class="fas fa-moon text-dark"></i> 
+                           Sunset: <strong>{{ data.current.sunset }}</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro forecastCard(item) %}
+<div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+    <div class="card forecast-card h-100">
+        <div class="card-body text-center">
+            <p class="mb-1"><small>{{ item.time }}</small></p>
+            <img src="https://openweathermap.org/img/wn/{{ item.icon }}.png" 
+                 alt="{{ item.description }}" width="50">
+            <p class="mb-1"><strong>{{ item.temperature }}°C</strong></p>
+            <p class="mb-1 small text-capitalize">{{ item.description }}</p>
+            <p class="mb-0 small">
+                <i class="fas fa-tint"></i> {{ item.humidity }}% 
+                <i class="fas fa-wind ml-2"></i> {{ item.wind_speed }}m/s
+            </p>
+            {% if item.pop > 0 %}
+            <p class="mb-0 small"><i class="fas fa-umbrella"></i> {{ item.pop }}%</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro historyTable(history) %}
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Date/Time</th>
+                <th>Location</th>
+                <th>Temperature</th>
+                <th>Description</th>
+                <th>Humidity</th>
+                <th>Wind Speed</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in history %}
+            <tr class="history-row" data-id="{{ item.id }}">
+                <td>{{ item.request_timestamp | date }}</td>
+                <td>{{ item.address }}</td>
+                <td>{{ item.weather_data.temperature }}°C</td>
+                <td class="text-capitalize">{{ item.weather_data.description }}</td>
+                <td>{{ item.weather_data.humidity }}%</td>
+                <td>{{ item.weather_data.wind_speed }} m/s</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endmacro %}

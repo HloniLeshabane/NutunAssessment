@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Results - {{ address }}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    {% import "templates/weather-card.html" as weather %}
+    
+    <nav class="navbar navbar-dark bg-primary">
+        <div class="container">
+            <a href="/" class="navbar-brand">
+                <i class="fas fa-cloud-sun"></i> Weather Tracker
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% if error %}
+        <div class="alert alert-danger" role="alert">
+            <i class="fas fa-exclamation-triangle"></i> {{ error }}
+        </div>
+        {% else %}
+        
+        <!-- Current Weather -->
+        {{ weather.weatherCard(data) }}
+        
+        <!-- Forecast Section -->
+        {% if data.forecast and data.forecast.length > 0 %}
+        <h4 class="mb-3">24-Hour Forecast</h4>
+        <div class="row">
+            {% for item in data.forecast %}
+                {% if loop.index <= 8 %}
+                    {{ weather.forecastCard(item) }}
+                {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        {% endif %}
+        
+        <div class="text-center mt-4">
+            <a href="/" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i> Back to Search
+            </a>
+        </div>
+    </div>
+</body>
+</html>
